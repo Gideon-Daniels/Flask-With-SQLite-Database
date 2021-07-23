@@ -45,6 +45,22 @@ def add_new_record():
             return render_template('result.html', msg=msg)
 
 
+@app.route('/show-records/', methods=["GET"])
+def show_records():
+    records = []
+    try:
+        with sqlite3.connect('database.db') as con:
+            cur = con.cursor()
+            cur.execute("SELECT*FROM students")
+            records = cur.fetchall()
+    except Exception as e:
+        con.rollback()
+        print("There was an error fetching results from the database.")
+    finally:
+        con.close()
+        return render_template('records.html', records=records)
+
+
 if __name__ == "__main__":
     app.run()
     app.debug = True
